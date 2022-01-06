@@ -5,11 +5,14 @@
     <style type='text/css'>
         #sheet {
             border:1px solid black;
+            max-width: 100%;
         }
     </style>
   </head>
   <body>
-    <canvas id="sheet" width="400" height="400"></canvas>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <canvas id="sheet" width="1000" height="400"></canvas>
+    <button type="button" id="download_button">Salvar</button>
     <script type='text/javascript'>
 /*jslint browser:true */
 "use strict";
@@ -152,6 +155,34 @@ function removeRaceHandlers() {
     canvas.removeEventListener('mousedown', mouseWins);
     canvas.removeEventListener('touchstart', touchWins);
 }
+
+document.getElementById("download_button").onclick = function() {
+    $('#sheet')[0].toBlob((blob) => {
+        let URLObj = window.URL || window.webkitURL;
+        let a = document.createElement("a");  
+        a.href = URLObj.createObjectURL(blob);
+        a.download = "untitled.png";
+        document.body.appendChild(a);
+        // a.click();
+        //console.log(a.download);
+        document.body.removeChild(a);
+        //Ajax
+        var data = new FormData();
+        data.append('file', blob);
+        console.log(data);
+        $.ajax({
+            method: "POST",
+            url: "processa-imagem.php",
+            data: data,
+            contentType: false,
+            processData: false,
+            success: function (data) {
+                console.log(data);
+            }
+        });
+   });
+}
+
 
 canvas.addEventListener('mousedown', mouseWins);
 canvas.addEventListener('touchstart', touchWins);
